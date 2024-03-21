@@ -3,7 +3,8 @@ name: 'Terraform python-app'
 on:
   push:
     branches: [ "main" ]
-  pull_request: [ "main" ]
+  pull_request: 
+    branches: [ "main" ]
 
 permissions: write-all
   # contents: read
