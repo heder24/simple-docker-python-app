@@ -132,7 +132,7 @@ module "prod-python-web" {
   source  = "app.terraform.io/heder24/ec2/aws"
   version = "1.0.0"
 
-  name                        = var.bastion
+  name                        = "${local.name}-web"
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro" # used to set core count below
   availability_zone           = element(module.vpc.azs, 0)
