@@ -146,6 +146,6 @@ module "prod-python-web" {
   user_data_base64            = base64encode(local.user_data)
   user_data_replace_on_change = true
   tags = {
-    Name = var.prod-python-web
+    Name = local.name
   }
 }
