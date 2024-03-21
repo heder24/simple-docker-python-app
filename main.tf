@@ -46,70 +46,18 @@ module "vpc" {
 # Security groups modules
 ################################################################################
 
-module "public_sg" {
-  source  = "app.terraform.io/heder24/public-security-groups/aws"
-  version = "1.0.0"
-
-  name   = var.public_sg
-  vpc_id = module.vpc.vpc_id
-
-  ingress_with_cidr_blocks = [
-    {
-      description = "Allow HTTP from public IPV4"
-      from_port   = 80
-      to_port     = 80
-      protocol    = 6
-      cidr_blocks = "0.0.0.0/0"
-
-    },
-
-  ]
-
-  ingress_with_ipv6_cidr_blocks = [
-
-    {
-      description      = "HTTP from public IPV6"
-      from_port        = 80
-      to_port          = 80
-      protocol         = 6
-      ipv6_cidr_blocks = "::/0"
-    },
-
-  ]
- egress_with_cidr_blocks = [
-    {
-      description = "HTTP to anywhere IPV4"
-      from_port   = 80
-      to_port     = 80
-      protocol    = 6
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
-
-  egress_with_ipv6_cidr_blocks = [
-    {
-      description      = "HTTP to anywhere IPV4"
-      from_port        = 80
-      to_port          = 80
-      protocol         = 6
-      ipv6_cidr_blocks = "::/0"
-    }
-  ]
-
-}
-
-resource "aws_security_group" "ssh_sg" {
+resource "aws_security_group" "sg-all" {
   name        = "ssh_security_group"
-  description = "Security group for SSH access"
+  description = "Security group for all access" #not recommended. for testing only
 
   vpc_id = module.vpc.vpc_id  
 
   // Ingress rule for SSH traffic
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 0
+    to_port     = 0
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Allowing SSH traffic from anywhere (open to the world)
+    cidr_blocks = ["0.0.0.0/0"]  # Allowing traffic from anywhere (open to the world)
   }
 
   // Egress rule to allow all outbound traffic
