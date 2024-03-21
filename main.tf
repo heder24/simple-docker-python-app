@@ -108,7 +108,7 @@ module "prod-python-web" {
   instance_type               = "t2.micro" # used to set core count below
   availability_zone           = element(module.vpc.azs, 0)
   subnet_id                   = element(module.vpc.public_subnets, 0)
-  vpc_security_group_ids      = [aws_security_group.sg-all.security_group_id]
+  vpc_security_group_ids      = [aws_security_group.sg-all.id]
   associate_public_ip_address = true
   disable_api_stop            = false
   key_name                    = var.key_name
