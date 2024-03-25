@@ -1,4 +1,9 @@
-name: 'Terraform python-app'
+name: 'python-app'
+env:
+  DOCKER_USER: ${{secrets.DOCKER_HUB_USER}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_HUB_TOKEN}}
+  DOCKER_REPOSITORY: pyhton-app
+  NODE_IMAGE_TAG: simple-python-app
 
 on:
   push:
@@ -11,6 +16,41 @@ permissions: write-all
   # issues: write
 
 jobs:
+  job1:
+  
+  build-scan-image:
+    
+    name: Build and Scan Docker Images
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+    - name: Build and tag Image
+      run: |
+        docker build -t ${{env.DOCKER_USER}}/${{env.DOCKER_REPOSITORY}}:${{env.NODE_IMAGE_TAG}} .
+        
+    - name: Run Trivy vulnerability scanner
+      id: scan
+      uses: crazy-max/ghaction-container-scan@v3
+      with: 
+        image: ${{env.DOCKER_USER}}/${{env.DOCKER_REPOSITORY}}:${{env.NODE_IMAGE_TAG}}
+        annotations: true
+        dockerfile: ./Dockerfile
+        severity: "CRITICAL,HIGH" 
+
+    - name: Upload SARIF file
+      if: ${{ steps.scan.outputs.sarif != '' }}
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+
+    - name: Push Image to Docker Hub    
+      run: |
+        docker login -u ${{env.DOCKER_USER}} -p ${{env.DOCKER_PASSWORD}}
+        docker push ${{env.DOCKER_USER}}/${{env.DOCKER_REPOSITORY}}:${{env.NODE_IMAGE_TAG}}
+      
+
+  job2:
   terraform:
     name: 'Terraform simple-pyhton-app'
     runs-on: ubuntu-latest
@@ -133,7 +173,8 @@ jobs:
 
     - name: Terraform Destroy
       env:
-        destroy: true
+        destroy: false
+      
       if: ${{ env.destroy == 'true' }} 
       #if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
       run: terraform destroy -auto-approve -input=true
