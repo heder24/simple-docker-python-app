@@ -52,6 +52,7 @@ jobs:
 
   job2:
     name: Terraform simple-python-app
+    needs: job1
     runs-on: ubuntu-latest
     environment: production
 
@@ -124,7 +125,7 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
-          apply: true
+          apply: false
         run: terraform apply -auto-approve -input=false
 
       - name: Terraform Destroy

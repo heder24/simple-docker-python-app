@@ -47,7 +47,7 @@ module "vpc" {
 ################################################################################
 
 resource "aws_security_group" "sg-all" {
-  name        = "ssh_security_group"
+  name        = "all_security_group"
   description = "Security group for all access" #not recommended. for testing only
 
   vpc_id = module.vpc.vpc_id  
@@ -116,6 +116,13 @@ module "prod-python-web" {
   create_iam_instance_profile = false
   user_data_base64            = base64encode(local.user_data)
   user_data_replace_on_change = true
+  
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 8
+    instance_metadata_tags      = "enabled"
+  }
   tags = {
     Name = local.name
   }
