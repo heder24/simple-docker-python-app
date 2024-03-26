@@ -16,12 +16,6 @@ module "vpc" {
 
   private_subnet_names = ["Private Subnet One", "Private Subnet Two"]
   # public_subnet_names omitted to show default name generation for all three subnets
-  database_subnet_names    = ["DB Subnet One"]
-  elasticache_subnet_names = ["Elasticache Subnet One", "Elasticache Subnet Two"]
-  redshift_subnet_names    = ["Redshift Subnet One", "Redshift Subnet Two", "Redshift Subnet Three"]
-  intra_subnet_names       = []
-
-  create_database_subnet_group  = false
   manage_default_network_acl    = false
   manage_default_route_table    = false
   manage_default_security_group = false

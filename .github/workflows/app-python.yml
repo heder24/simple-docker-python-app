@@ -129,5 +129,7 @@ jobs:
         run: terraform apply -auto-approve -input=false
 
       - name: Terraform Destroy
+        env:
+          destroy: false 
         if: ${{ env.destroy == 'true' }} 
         run: terraform destroy -auto-approve -input=true
